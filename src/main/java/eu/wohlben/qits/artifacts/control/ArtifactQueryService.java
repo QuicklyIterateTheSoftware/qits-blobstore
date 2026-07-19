@@ -1,7 +1,7 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
-import eu.wohlben.qits.artifactory.entity.ArtifactRecord;
-import eu.wohlben.qits.artifactory.persistence.ArtifactRecordRepository;
+import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
+import eu.wohlben.qits.artifacts.persistence.ArtifactRecordRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.ArrayList;

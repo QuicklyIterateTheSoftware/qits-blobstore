@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import eu.wohlben.qits.artifactory.dto.UploadResult;
-import eu.wohlben.qits.artifactory.entity.ArtifactRecord;
-import eu.wohlben.qits.artifactory.entity.RepositoryType;
-import eu.wohlben.qits.artifactory.error.BadRequestException;
-import eu.wohlben.qits.artifactory.error.NotFoundException;
-import eu.wohlben.qits.artifactory.persistence.ArtifactRecordRepository;
+import eu.wohlben.qits.artifacts.dto.UploadResult;
+import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
+import eu.wohlben.qits.artifacts.entity.RepositoryType;
+import eu.wohlben.qits.artifacts.error.BadRequestException;
+import eu.wohlben.qits.artifacts.error.NotFoundException;
+import eu.wohlben.qits.artifacts.persistence.ArtifactRecordRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.io.ByteArrayInputStream;
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class BlobServiceTest extends ArtifactoryTestSupport {
+class BlobServiceTest extends ArtifactsTestSupport {
 
   @Inject BlobService blobService;
 

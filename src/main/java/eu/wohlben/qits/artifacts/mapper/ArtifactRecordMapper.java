@@ -1,7 +1,7 @@
-package eu.wohlben.qits.artifactory.mapper;
+package eu.wohlben.qits.artifacts.mapper;
 
-import eu.wohlben.qits.artifactory.dto.ArtifactRecordDto;
-import eu.wohlben.qits.artifactory.entity.ArtifactRecord;
+import eu.wohlben.qits.artifacts.dto.ArtifactRecordDto;
+import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

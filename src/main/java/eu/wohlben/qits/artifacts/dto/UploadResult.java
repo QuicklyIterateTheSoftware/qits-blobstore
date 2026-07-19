@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.dto;
+package eu.wohlben.qits.artifacts.dto;
 
 /**
  * The outcome of an upload: {@code id} is the content id (the blob's SHA-256), {@code existing} is

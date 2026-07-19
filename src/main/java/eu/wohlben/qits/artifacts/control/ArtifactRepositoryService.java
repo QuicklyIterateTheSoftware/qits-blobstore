@@ -1,10 +1,10 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
-import eu.wohlben.qits.artifactory.entity.ArtifactRepository;
-import eu.wohlben.qits.artifactory.entity.RepositoryType;
-import eu.wohlben.qits.artifactory.error.BadRequestException;
-import eu.wohlben.qits.artifactory.error.NotFoundException;
-import eu.wohlben.qits.artifactory.persistence.ArtifactRepositoryRepository;
+import eu.wohlben.qits.artifacts.entity.ArtifactRepository;
+import eu.wohlben.qits.artifacts.entity.RepositoryType;
+import eu.wohlben.qits.artifacts.error.BadRequestException;
+import eu.wohlben.qits.artifacts.error.NotFoundException;
+import eu.wohlben.qits.artifacts.persistence.ArtifactRepositoryRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -54,7 +54,7 @@ public class ArtifactRepositoryService {
   public ArtifactRepository require(String name) {
     ArtifactRepository repo = repositories.findById(name);
     if (repo == null) {
-      throw new NotFoundException("No such artifactory repository: " + name);
+      throw new NotFoundException("No such artifacts repository: " + name);
     }
     return repo;
   }

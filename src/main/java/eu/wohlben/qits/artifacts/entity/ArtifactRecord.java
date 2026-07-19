@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.entity;
+package eu.wohlben.qits.artifacts.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.CollectionTable;

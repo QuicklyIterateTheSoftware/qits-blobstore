@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

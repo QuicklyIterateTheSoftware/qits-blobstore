@@ -1,9 +1,9 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
 /**
- * The well-known metadata keys (docs/epics/qits-artifactory/). The store validates what a
- * repository type requires and stores the rest opaquely; these are the keys with defined server
- * behaviour or a role in the golden-pairing query.
+ * The well-known metadata keys (docs/epics/qits-artifacts/). The store validates what a repository
+ * type requires and stores the rest opaquely; these are the keys with defined server behaviour or a
+ * role in the golden-pairing query.
  */
 public final class MetadataKeys {
 

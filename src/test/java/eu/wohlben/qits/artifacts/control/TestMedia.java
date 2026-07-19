@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
-/** Minimal, valid-enough media byte fixtures for the artifactory tests (header/magic + a salt). */
+/** Minimal, valid-enough media byte fixtures for the artifacts tests (header/magic + a salt). */
 final class TestMedia {
 
   private TestMedia() {}

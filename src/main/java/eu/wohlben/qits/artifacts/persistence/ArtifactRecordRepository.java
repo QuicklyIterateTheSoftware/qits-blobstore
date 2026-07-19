@@ -1,6 +1,6 @@
-package eu.wohlben.qits.artifactory.persistence;
+package eu.wohlben.qits.artifacts.persistence;
 
-import eu.wohlben.qits.artifactory.entity.ArtifactRecord;
+import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;

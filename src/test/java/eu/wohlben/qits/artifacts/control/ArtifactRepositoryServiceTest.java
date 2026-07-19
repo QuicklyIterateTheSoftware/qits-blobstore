@@ -1,17 +1,17 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import eu.wohlben.qits.artifactory.entity.RepositoryType;
-import eu.wohlben.qits.artifactory.error.BadRequestException;
-import eu.wohlben.qits.artifactory.error.NotFoundException;
+import eu.wohlben.qits.artifacts.entity.RepositoryType;
+import eu.wohlben.qits.artifacts.error.BadRequestException;
+import eu.wohlben.qits.artifacts.error.NotFoundException;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class ArtifactRepositoryServiceTest extends ArtifactoryTestSupport {
+class ArtifactRepositoryServiceTest extends ArtifactsTestSupport {
 
   @Inject ArtifactRepositoryService service;
 

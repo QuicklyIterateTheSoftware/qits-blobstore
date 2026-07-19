@@ -1,8 +1,8 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
-import eu.wohlben.qits.artifactory.error.InternalServerErrorException;
-import eu.wohlben.qits.artifactory.error.NotFoundException;
-import eu.wohlben.qits.artifactory.error.PayloadTooLargeException;
+import eu.wohlben.qits.artifacts.error.InternalServerErrorException;
+import eu.wohlben.qits.artifacts.error.NotFoundException;
+import eu.wohlben.qits.artifacts.error.PayloadTooLargeException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +29,7 @@ public class BlobStore {
 
   private static final Pattern SHA256_HEX = Pattern.compile("[0-9a-f]{64}");
 
-  @ConfigProperty(name = "qits.artifactory.blobs-dir", defaultValue = "data/artifactory/blobs")
+  @ConfigProperty(name = "qits.artifacts.blobs-dir", defaultValue = "data/artifacts/blobs")
   String blobsDir;
 
   /** A blob staged in the temp area, not yet promoted to its content-addressed path. */
@@ -44,7 +44,7 @@ public class BlobStore {
     try {
       Files.createDirectories(tmp.getParent());
     } catch (IOException e) {
-      throw new InternalServerErrorException("Could not create artifactory temp dir", e);
+      throw new InternalServerErrorException("Could not create artifacts temp dir", e);
     }
     MessageDigest digest = sha256Digest();
     long total = 0;

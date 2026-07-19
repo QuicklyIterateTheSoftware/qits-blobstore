@@ -1,13 +1,13 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
-import eu.wohlben.qits.artifactory.dto.UploadResult;
-import eu.wohlben.qits.artifactory.entity.ArtifactRecord;
-import eu.wohlben.qits.artifactory.entity.ArtifactRepository;
-import eu.wohlben.qits.artifactory.entity.RepositoryType;
-import eu.wohlben.qits.artifactory.error.BadRequestException;
-import eu.wohlben.qits.artifactory.error.InternalServerErrorException;
-import eu.wohlben.qits.artifactory.error.NotFoundException;
-import eu.wohlben.qits.artifactory.persistence.ArtifactRecordRepository;
+import eu.wohlben.qits.artifacts.dto.UploadResult;
+import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
+import eu.wohlben.qits.artifacts.entity.ArtifactRepository;
+import eu.wohlben.qits.artifacts.entity.RepositoryType;
+import eu.wohlben.qits.artifacts.error.BadRequestException;
+import eu.wohlben.qits.artifacts.error.InternalServerErrorException;
+import eu.wohlben.qits.artifacts.error.NotFoundException;
+import eu.wohlben.qits.artifacts.persistence.ArtifactRecordRepository;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

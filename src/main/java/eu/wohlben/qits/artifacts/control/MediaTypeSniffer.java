@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.control;
+package eu.wohlben.qits.artifacts.control;
 
 import java.nio.charset.StandardCharsets;
 

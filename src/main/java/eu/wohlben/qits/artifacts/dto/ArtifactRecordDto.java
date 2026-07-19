@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.dto;
+package eu.wohlben.qits.artifacts.dto;
 
 import java.time.Instant;
 import java.util.Map;

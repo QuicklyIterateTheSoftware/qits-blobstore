@@ -1,4 +1,4 @@
-package eu.wohlben.qits.artifactory.entity;
+package eu.wohlben.qits.artifacts.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
