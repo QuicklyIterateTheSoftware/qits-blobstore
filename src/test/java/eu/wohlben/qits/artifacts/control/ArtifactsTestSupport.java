@@ -2,15 +2,6 @@ package eu.wohlben.qits.artifacts.control;
 
 import eu.wohlben.qits.artifacts.persistence.ArtifactRecordRepository;
 import eu.wohlben.qits.artifacts.persistence.ArtifactRepositoryRepository;
-import eu.wohlben.qits.artifacts.persistence.DaemonBinaryRepository;
-import eu.wohlben.qits.artifacts.persistence.MavenArtifactRepository;
-import eu.wohlben.qits.artifacts.persistence.NpmDistTagRepository;
-import eu.wohlben.qits.artifacts.persistence.NpmProxyPackumentRepository;
-import eu.wohlben.qits.artifacts.persistence.NpmVersionRepository;
-import eu.wohlben.qits.artifacts.persistence.NpmVersionTombstoneRepository;
-import eu.wohlben.qits.artifacts.persistence.OciManifestRepository;
-import eu.wohlben.qits.artifacts.persistence.OciMirrorUpstreamRepository;
-import eu.wohlben.qits.artifacts.persistence.OciTagRepository;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import jakarta.inject.Inject;
 import java.io.IOException;
@@ -25,30 +16,17 @@ import java.util.Map;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 
-/** Wipes the on-disk blobs and both tables before each test so every case starts empty. */
+/**
+ * Wipes the on-disk blobs and both tables before each test so every case starts empty.
+ *
+ * <p>Two tables, not eleven: the protocol tables this used to wipe belong to qits-registries now,
+ * and each of its modules keeps a fixture of the same shape over the tables it owns.
+ */
 abstract class ArtifactsTestSupport {
 
   @Inject ArtifactRecordRepository records;
 
   @Inject ArtifactRepositoryRepository repositories;
-
-  @Inject OciManifestRepository ociManifests;
-
-  @Inject OciTagRepository ociTags;
-
-  @Inject NpmVersionRepository npmVersions;
-
-  @Inject NpmDistTagRepository npmDistTags;
-
-  @Inject NpmVersionTombstoneRepository npmVersionTombstones;
-
-  @Inject NpmProxyPackumentRepository npmProxyPackuments;
-
-  @Inject MavenArtifactRepository mavenArtifacts;
-
-  @Inject DaemonBinaryRepository daemonBinaries;
-
-  @Inject OciMirrorUpstreamRepository mirrorUpstreams;
 
   @Inject BlobDiskIndex diskIndex;
 
@@ -60,20 +38,7 @@ abstract class ArtifactsTestSupport {
     QuarkusTransaction.requiringNew()
         .run(
             () -> {
-              // The protocol tables first: every one of them carries a foreign key to
-              // artifact_repository.
-              ociTags.deleteAll();
-              ociManifests.deleteAll();
-              npmDistTags.deleteAll();
-              npmVersions.deleteAll();
-              npmVersionTombstones.deleteAll();
-              npmProxyPackuments.deleteAll();
-              mavenArtifacts.deleteAll();
-              daemonBinaries.deleteAll();
               records.deleteAll();
-              // The mirror upstreams too: their slug is a foreign key into artifact_repository, so
-              // the pairing that makes a namespace resolvable is also what makes the wipe ordered.
-              mirrorUpstreams.deleteAll();
               repositories.deleteAll();
             });
     Path dir = Path.of(blobsDir);
