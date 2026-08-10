@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -26,8 +25,8 @@ class ArtifactAccessTrackerTest extends ArtifactsTestSupport {
 
   @Test
   void aContentReadTouchesEveryMatchingRecordButNoOtherRepository() {
-    repositoryService.ensure("shots", RepositoryType.CI_SCREENSHOTS);
-    repositoryService.ensure("other", RepositoryType.CI_SCREENSHOTS);
+    repositoryService.ensure("shots", CiScreenshotsProfile.KEY);
+    repositoryService.ensure("other", CiScreenshotsProfile.KEY);
     persistRecord("shots", "same");
     persistRecord("shots", "same");
     persistRecord("other", "same");
@@ -41,7 +40,7 @@ class ArtifactAccessTrackerTest extends ArtifactsTestSupport {
 
   @Test
   void writesAreCoalescedUntilTheTimestampIsOneHourOld() {
-    repositoryService.ensure("shots", RepositoryType.CI_SCREENSHOTS);
+    repositoryService.ensure("shots", CiScreenshotsProfile.KEY);
     persistRecord("shots", "blob");
     tracker.touchArtifact("shots", "blob", FIRST);
     tracker.touchArtifact("shots", "blob", FIRST.plusSeconds(3599));

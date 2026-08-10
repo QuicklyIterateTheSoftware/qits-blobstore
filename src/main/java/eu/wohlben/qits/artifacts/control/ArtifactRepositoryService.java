@@ -1,7 +1,6 @@
 package eu.wohlben.qits.artifacts.control;
 
 import eu.wohlben.qits.artifacts.entity.ArtifactRepository;
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
 import eu.wohlben.qits.artifacts.error.BadRequestException;
 import eu.wohlben.qits.artifacts.error.NotFoundException;
 import eu.wohlben.qits.artifacts.persistence.ArtifactRepositoryRepository;
@@ -17,22 +16,28 @@ public class ArtifactRepositoryService {
 
   @Inject ArtifactRepositoryRepository repositories;
 
+  @Inject RepositoryTypeProfiles repositoryTypes;
+
   /**
    * Idempotently ensures a repository of the given type exists. Re-ensuring an existing repository
    * is a no-op that returns it; requesting a <em>different</em> type for an existing name is a 400
    * (a repository's type is immutable — its stored blobs were validated against it).
+   *
+   * @param type the stored profile key, e.g. {@code CI_SCREENSHOTS}. A key no contributed profile
+   *     claims is a 400 here rather than a row nothing can enforce later.
    */
   @Transactional
-  public ArtifactRepository ensure(String name, RepositoryType type) {
+  public ArtifactRepository ensure(String name, String type) {
     if (name == null || name.isBlank()) {
       throw new BadRequestException("repository name is required");
     }
-    if (type == null) {
+    if (type == null || type.isBlank()) {
       throw new BadRequestException("repository type is required");
     }
+    repositoryTypes.require(type);
     ArtifactRepository existing = repositories.findById(name);
     if (existing != null) {
-      if (existing.type != type) {
+      if (!existing.type.equals(type)) {
         throw new BadRequestException(
             "Repository '" + name + "' already exists with type " + existing.type);
       }

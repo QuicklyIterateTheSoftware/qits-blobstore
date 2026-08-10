@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
 import eu.wohlben.qits.artifacts.error.NotFoundException;
 import eu.wohlben.qits.artifacts.persistence.ArtifactRecordRepository;
 import io.quarkus.narayana.jta.QuarkusTransaction;
@@ -35,7 +34,7 @@ class ArtifactQueryServiceTest extends ArtifactsTestSupport {
 
   @BeforeEach
   void seed() {
-    repositoryService.ensure("shots", RepositoryType.CI_SCREENSHOTS);
+    repositoryService.ensure("shots", CiScreenshotsProfile.KEY);
     // Same (branch, flow) twice — T2 is the newer golden; plus other groups.
     persist("main", "checkout", T1, "b1");
     persist("main", "checkout", T2, "b2");

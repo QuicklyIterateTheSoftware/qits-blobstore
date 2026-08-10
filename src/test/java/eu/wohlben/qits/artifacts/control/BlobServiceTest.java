@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import eu.wohlben.qits.artifacts.dto.UploadResult;
 import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
 import eu.wohlben.qits.artifacts.error.BadRequestException;
 import eu.wohlben.qits.artifacts.error.NotFoundException;
 import eu.wohlben.qits.artifacts.persistence.ArtifactRecordRepository;
@@ -30,8 +29,8 @@ class BlobServiceTest extends ArtifactsTestSupport {
 
   @BeforeEach
   void seedRepos() {
-    repositoryService.ensure("ci-screenshots", RepositoryType.CI_SCREENSHOTS);
-    repositoryService.ensure("ci-videos", RepositoryType.CI_VIDEOS);
+    repositoryService.ensure("ci-screenshots", CiScreenshotsProfile.KEY);
+    repositoryService.ensure("ci-videos", CiVideosProfile.KEY);
   }
 
   private UploadResult uploadPng(int w, int h, int salt, String branch, String flow) {

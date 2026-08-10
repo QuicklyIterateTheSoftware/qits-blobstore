@@ -71,8 +71,8 @@ public final class MediaTypeSniffer {
     int semi = contentType.indexOf(';'); // drop parameters like "; charset=utf-8"
     String type = (semi >= 0 ? contentType.substring(0, semi) : contentType).trim();
     // Locale.ROOT so a Turkish-locale JVM doesn't fold 'I' to 'ı' and miss the allowed-set entries
-    // (the rest of the codebase — RepositoryType.wireName, BlobController.META_PREFIX_LC — does the
-    // same).
+    // (the rest of the codebase — RepositoryTypeProfile.wireNameOf, BlobController.META_PREFIX_LC —
+    // does the same).
     return type.toLowerCase(java.util.Locale.ROOT);
   }
 

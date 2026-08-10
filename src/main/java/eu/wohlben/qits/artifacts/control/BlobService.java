@@ -3,7 +3,7 @@ package eu.wohlben.qits.artifacts.control;
 import eu.wohlben.qits.artifacts.dto.UploadResult;
 import eu.wohlben.qits.artifacts.entity.ArtifactRecord;
 import eu.wohlben.qits.artifacts.entity.ArtifactRepository;
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
+import eu.wohlben.qits.artifacts.entity.RepositoryTypeProfile;
 import eu.wohlben.qits.artifacts.error.BadRequestException;
 import eu.wohlben.qits.artifacts.error.InternalServerErrorException;
 import eu.wohlben.qits.artifacts.error.NotFoundException;
@@ -37,6 +37,8 @@ public class BlobService {
 
   @Inject ArtifactRepositoryService repositoryService;
 
+  @Inject RepositoryTypeProfiles repositoryTypes;
+
   @Inject BlobStore blobStore;
 
   @Inject ArtifactRecordRepository records;
@@ -52,7 +54,8 @@ public class BlobService {
       Map<String, String> clientMetadata,
       InputStream body) {
     ArtifactRepository repo = repositoryService.require(repoName);
-    RepositoryType type = repo.type;
+    String type = repo.type;
+    RepositoryTypeProfile profile = repositoryTypes.require(type);
 
     BufferedInputStream in = new BufferedInputStream(body);
     byte[] head = peek(in, SNIFF_BYTES);
@@ -62,14 +65,16 @@ public class BlobService {
       throw new BadRequestException(
           "Could not determine media type (no magic-byte signature and no usable Content-Type)");
     }
-    if (!type.accepts(mediatype)) {
+    // A protocol type refuses outright: accepts() is false whatever the bytes are, so a stray POST
+    // here never reaches the cap. A validated type refuses anything outside its allowed set.
+    if (!profile.accepts(mediatype)) {
       throw new BadRequestException(
           "Media type "
               + mediatype
               + " is not accepted by a "
               + type
               + " repository (allowed: "
-              + new TreeSet<>(type.allowedMediaTypes())
+              + new TreeSet<>(profile.allowedMediaTypes())
               + ")");
     }
 
@@ -84,12 +89,12 @@ public class BlobService {
             }
           });
     }
-    requireProfileKeys(type, metadata);
+    requireProfileKeys(profile, metadata);
     if ("image/png".equals(mediatype)) {
       verifyPngDimensions(head, metadata);
     }
 
-    BlobStore.StagedBlob staged = blobStore.stage(in, type.maxBytes());
+    BlobStore.StagedBlob staged = blobStore.stage(in, profile.maxBytes());
     boolean existing = blobStore.promote(staged);
 
     // Truncate to microseconds so the stored column (H2 timestamp(6)) and the created-at metadata
@@ -130,12 +135,13 @@ public class BlobService {
     return new BlobContent(record.mediatype, record.size, stream);
   }
 
-  private static void requireProfileKeys(RepositoryType type, Map<String, String> metadata) {
-    for (String required : type.requiredMetadataKeys()) {
+  private static void requireProfileKeys(
+      RepositoryTypeProfile profile, Map<String, String> metadata) {
+    for (String required : profile.requiredMetadataKeys()) {
       String value = metadata.get(required);
       if (value == null || value.isBlank()) {
         throw new BadRequestException(
-            "Missing required metadata key for a " + type + " upload: " + required);
+            "Missing required metadata key for a " + profile.key() + " upload: " + required);
       }
     }
   }

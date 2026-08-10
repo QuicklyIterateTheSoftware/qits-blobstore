@@ -1,6 +1,9 @@
 package eu.wohlben.qits.artifacts.dto;
 
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
 import java.time.Instant;
 
-public record ArtifactRepositoryDto(String name, RepositoryType type, Instant createdAt) {}
+/**
+ * A repository as the API spells it. {@code type} is the <b>kebab wire form</b> ({@code
+ * ci-screenshots}), not the stored key — the entity carries the stored one and the mapper converts.
+ */
+public record ArtifactRepositoryDto(String name, String type, Instant createdAt) {}

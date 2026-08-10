@@ -3,7 +3,6 @@ package eu.wohlben.qits.artifacts.control;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import eu.wohlben.qits.artifacts.entity.RepositoryType;
 import eu.wohlben.qits.artifacts.error.BadRequestException;
 import eu.wohlben.qits.artifacts.error.NotFoundException;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,17 +16,17 @@ class ArtifactRepositoryServiceTest extends ArtifactsTestSupport {
 
   @Test
   void ensureIsIdempotent() {
-    var first = service.ensure("shots", RepositoryType.CI_SCREENSHOTS);
-    var second = service.ensure("shots", RepositoryType.CI_SCREENSHOTS);
+    var first = service.ensure("shots", CiScreenshotsProfile.KEY);
+    var second = service.ensure("shots", CiScreenshotsProfile.KEY);
     assertEquals(first.name, second.name);
     assertEquals(1, service.list().size());
   }
 
   @Test
   void ensureRejectsATypeChange() {
-    service.ensure("shots", RepositoryType.CI_SCREENSHOTS);
+    service.ensure("shots", CiScreenshotsProfile.KEY);
     assertThrows(
-        BadRequestException.class, () -> service.ensure("shots", RepositoryType.CI_VIDEOS));
+        BadRequestException.class, () -> service.ensure("shots", CiVideosProfile.KEY));
   }
 
   @Test
