@@ -19,7 +19,8 @@
 
          One module, because that is the whole lib. Modelled on qits-platform-artifacts' root pom +
          artifacts/pom.xml (same Quarkus BOM, same jandex/annotation processing), trimmed to what
-         this jar needs. Resolves from Maven Central only — it depends on no platform artifact. -->
+         this jar needs. One platform artifact, qits-db-core, which is why the <repositories> block
+         below exists; everything else comes from Maven Central. -->
     <groupId>eu.wohlben.qits</groupId>
     <artifactId>qits-blobstore</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -34,6 +35,14 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.34.6</quarkus.platform.version>
+
+        <!-- DbRetry, the read/write patience seam. Published by
+             libs/qits-integrations-quarkus, so it is the one dependency here that is neither on
+             Maven Central nor in the Quarkus platform — see the <repositories> block below. A
+             clone still builds with that repository reachable, or offline once the jar is in
+             ~/.m2. -->
+        <qits.db-core.version>2026.811.165001</qits.db-core.version>
+        <qits.maven.repository.url>http://localhost:8081/artifacts/maven/maven</qits.maven.repository.url>
 
         <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
@@ -66,10 +75,29 @@
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <!-- The platform's own Maven repository, where qits-db-core is published. The id is what a
+             locally cached copy is recorded under, so it has to stay `qits-maven` or an offline
+             build refuses an artifact it already has. -->
+        <repository>
+            <id>qits-maven</id>
+            <url>${qits.maven.repository.url}</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+            <!-- DbRetry: this jar's own reads and writes hold through a postgres cutover, so the
+                 class is named in these sources and the scope is compile. It also reaches every
+                 consumer, which is the point — a service that owns these tables gets the same
+                 patience without restating a dependency. -->
+            <groupId>${project.groupId}</groupId>
+            <artifactId>qits-db-core</artifactId>
+            <version>${qits.db-core.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
