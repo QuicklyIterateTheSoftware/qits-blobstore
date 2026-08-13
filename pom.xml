@@ -6,13 +6,16 @@
 
     <!-- The content-addressed blob store, extracted from qits-platform-artifacts (phase 1 of
          byte-plane-split-plan.md). A plain library jar: named, typed repositories; SHA-256
-         content-addressed blobs on disk; flat string metadata. NO web, NO JAX-RS, and NOTHING that
+         content-addressed blobs in chunked PostgreSQL rows; flat string metadata. NO web, NO JAX-RS, and NOTHING that
          names a package format — npm, maven and OCI live in qits-registries, which depends on this.
 
          NO FLYWAY MIGRATIONS. A lib does not own a schema; each consuming service does. The JPA
          entities travel as they are, so a service that owns the tables gets the same mappings. The
-         test suite generates its schema from those entities (drop-and-create), which is also what
-         keeps the mappings honest without a migration chain to carry.
+         test suite generates their schema from those entities (drop-and-create), which is also what
+         keeps the mappings honest without a migration chain to carry. The three blob tables have no
+         entities — the store speaks plain JDBC — so they ship as reference DDL at
+         src/main/resources/db/blobstore-tables.sql, which each consumer copies into its own lineage
+         and which this suite applies verbatim.
 
          Package names are UNCHANGED (eu.wohlben.qits.artifacts.*) on purpose: the service-side
          switch to this jar is then an import-free diff and every entity/table mapping stays put.
@@ -23,7 +26,11 @@
          below exists; everything else comes from Maven Central. -->
     <groupId>eu.wohlben.qits</groupId>
     <artifactId>qits-blobstore</artifactId>
-    <version>2026.813.161828</version>
+    <!-- BRANCH VERSION. `postgres-blobs` moves this jar's only backend to PostgreSQL, and every
+         consumer has to move with it in the same campaign — so the branch must be invisible to the
+         calver train and to a ship-mains bootstrap until they are all ready. A -SNAPSHOT the
+         consumer branches pin exactly is what keeps it that way; the release restamps calver. -->
+    <version>1.0.0-pgblobs-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>qits-blobstore</name>
 
@@ -47,6 +54,12 @@
         <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
         <jandex-plugin.version>3.4.0</jandex-plugin.version>
+        <!-- Real postgres for the test suite: binaries resolved as ordinary Maven artifacts and
+             run as a child process, so a clone still builds and tests green with no docker. 18.4.0
+             matches the platform's own qits-oci-postgresql image. -->
+        <zonky.embedded-postgres.version>2.2.2</zonky.embedded-postgres.version>
+        <zonky.postgres-binaries.version>18.4.0</zonky.postgres-binaries.version>
+
         <lombok.version>1.18.38</lombok.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -58,6 +71,15 @@
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>${quarkus.platform.artifact-id}</artifactId>
                 <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <!-- Which postgres the embedded binaries ARE. Imported as a BOM because the per-arch
+                     artifacts below are separate coordinates. -->
+                <groupId>io.zonky.test.postgres</groupId>
+                <artifactId>embedded-postgres-binaries-bom</artifactId>
+                <version>${zonky.postgres-binaries.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -100,6 +122,14 @@
             <version>${qits.db-core.version}</version>
         </dependency>
         <dependency>
+            <!-- The blob store speaks plain JDBC against an AgroalDataSource it looks up by name,
+                 so the class and the lookup helper are named in these sources. Compile scope, and
+                 explicit rather than transitive through Panache, because this jar depends on the
+                 API rather than merely inheriting it. -->
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-agroal</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
@@ -122,9 +152,43 @@
         </dependency>
         <dependency>
             <!-- TEST SCOPE, unlike the module this came from: a library must not pick the consuming
-                 service's database. The suite runs on in-memory H2. -->
+                 service's database. The suite runs the JPA entities on in-memory H2 — they are
+                 engine-neutral and each consumer maps them onto its own store — and the blob tables
+                 on real postgres, which is the only engine the blob store has. -->
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- The blob store's engine. Test scope here for the same reason H2 is: the consumer
+                 ships the driver its deployment needs. -->
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.zonky.test</groupId>
+            <artifactId>embedded-postgres</artifactId>
+            <version>${zonky.embedded-postgres.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Named per architecture on purpose: the binaries are separate artifacts and zonky
+                 picks one at run time, so an unnamed arch fails in the middle of a suite rather than
+                 during resolution. These three are what this platform is built and developed on —
+                 the same three the qits-workspaces and qits-deployments suites name. -->
+            <groupId>io.zonky.test.postgres</groupId>
+            <artifactId>embedded-postgres-binaries-linux-amd64</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.zonky.test.postgres</groupId>
+            <artifactId>embedded-postgres-binaries-linux-arm64v8</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.zonky.test.postgres</groupId>
+            <artifactId>embedded-postgres-binaries-darwin-arm64v8</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
