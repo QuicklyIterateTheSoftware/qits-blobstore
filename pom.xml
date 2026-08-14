@@ -30,7 +30,7 @@
          consumer has to move with it in the same campaign — so the branch must be invisible to the
          calver train and to a ship-mains bootstrap until they are all ready. A -SNAPSHOT the
          consumer branches pin exactly is what keeps it that way; the release restamps calver. -->
-    <version>1.0.0-pgblobs-SNAPSHOT</version>
+    <version>2026.814.71936</version>
     <packaging>jar</packaging>
     <name>qits-blobstore</name>
 
@@ -49,7 +49,7 @@
              clone still builds with that repository reachable, or offline once the jar is in
              ~/.m2. -->
         <qits.db-core.version>2026.811.165001</qits.db-core.version>
-        <qits.maven.repository.url>http://localhost:8081/artifacts/maven/maven</qits.maven.repository.url>
+        <qits.maven.repository.url>http://registry.dev.localhost:8080/artifacts/maven/maven</qits.maven.repository.url>
 
         <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
